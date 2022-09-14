@@ -1,0 +1,95 @@
+{{ template "layout.html" .}}
+{{ define "css" }}
+    <link href="/static/buss/css/task.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/plugin/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"/>
+{{ end }}
+
+{{ define "webinfo" }}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="btn-group pull-right m-t-15">
+                    <a type="button" class="btn btn-tag dropdown-toggle waves-effect waves-light"
+                       href="/task/downloadxls" style="color: white">下载
+                    </a>
+                    <a type="button" class="btn btn-danger dropdown-toggle waves-effect waves-light deleteall"
+                       style="color: white">删除全部
+                    </a>
+                </div>
+                <div style="margin-top: 15px;margin-bottom: 15px">
+                    <span style="font-weight: bold;font-size: 20px;color:white">任务总数:{{ .total }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            {{ range $index,$value := .item }}
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="card-box project-box" style="min-height: 154px">
+                        <h4 class="m-t-0 m-b-5" style="height: 25px;width:66%;white-space: nowrap">
+                            <a href="/taskdetail?taskid={{ $value.Id }}" target="_blank" title="{{ $value.Title }}"
+                               style="color:white">{{ $value.Title }}</a>
+                            <div style="position: absolute;right: 20px;top: 20px;color:#999999">
+                                {{ if eq $value.Plan 0 }}
+                                {{ if eq $value.Status 0 }}
+                                        <i class="zmdi zmdi-hourglass-outline" title="未执行"></i>
+                                {{ else if eq $value.Status 1 }}
+                                        <i class="zmdi zmdi-hourglass-alt" title="正在执行"></i>
+                                {{ else if eq $value.Status 2 }}
+                                        <a href="javascript:void(0)" title="已完成，可复测" class="recheck"><i
+                                                class="zmdi zmdi-hourglass"></i></a>
+                                {{ else }}
+                                        <i class="zmdi zmdi-alert-triangle"></i>
+                                {{ end }}
+                                {{ else }}
+                                {{ if $value.IsUpdate }}
+                                        <i class="zmdi zmdi-refresh" title="循环任务"></i>
+                                {{ end }}
+                                    <i class="zmdi zmdi-calendar-check" title="循环周期">{{ $value.Plan }}</i>
+                                    <i class="zmdi zmdi-chart-donut" title="已循环次数">{{ $value.Status }}</i>
+                                {{ end }}
+                                <a data-toggle="collapse" data-parent="#accordion1" href="#bg-primary{{ $index }}">
+                                    <i class="zmdi zmdi-plus tag" style="color:#337ab7"></i></a>
+                                <a href="javascript:void(0);"><i class="zmdi zmdi-close" id="{{ $value.Id }}"></i></a>
+                            </div>
+                        </h4>
+
+                        <div style="line-height: 2">
+                            <p class="label label-type font-13">{{ $value.Plugin }}</p>
+                            <p class="label label-server font-13">{{ $value.Condition }}</p>
+                            <p class="label label-time font-13">{{ $value.Time.Format "2006-01-02 15:04:05" }}</p>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div id="bg-primary{{ $index }}" class="panel-collapse collapse" style="margin-top: 20px">
+                            {{ range $ips := $value.Target }}
+                                <div class="label label-ips"
+                                     style="padding-bottom: 1px">{{ index $ips 0 }}:{{ index $ips 1 }}</div>
+                            {{ end }}
+                        </div>
+                    </div>
+                </div><!-- end col-->
+            {{ end }}
+        </div>
+        {{ if gt .total 60 }}
+            <div class="row" style="position: absolute;top: 100%;left: 50%;margin: -80px 0 0 -212px;">
+                <ul class="pagination pagination-split">
+                    <li>
+                        <a href="javascript:taskprePage()"><i class="fa fa-angle-left"></i>前一页</a>
+                    </li>
+                    {{ range .page_list }}
+                            <li>
+                                <a href="javascript:taskturnTo({{ . }})">{{ . }}</a>
+                            </li>
+                    {{ end }}
+                    <li>
+                        <a href="javascript:tasknextPage()">后一页<i class="fa fa-angle-right"></i></a>
+                    </li>
+                </ul>
+            </div>
+        {{ end }}
+    </div>
+{{ end }}
+{{ define "js" }}
+    <script src="/static/plugin/sweetalert/sweetalert.min.js"></script>
+    <script src="/static/buss/js/task.js"></script>
+{{ end }}
+
