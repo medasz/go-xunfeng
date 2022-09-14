@@ -1,0 +1,132 @@
+{{ template "layout.html" .}}
+{{ define "css" }}
+    <link href="/static/plugin/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/plugin/switchery/switchery.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/plugin/tip-twitter/tip-twitter.css" rel="stylesheet" type="text/css"/>
+    <style>
+        .zmdi-help-outline {
+            margin-left: 10px;
+        }
+    </style>
+{{ end }}
+
+{{ define "webinfo" }}
+    <div class="container">
+        <div class="col-md-12">
+            <div class="row">
+                {{ range .values }}
+                    {{ if .IsList }}
+                        <div class="col-lg-6 col-md-6">
+                            <div class="card-box">
+                                {{if eq .ConfigType "Port_list"}}
+                                    {{ if .IsSwitch }}
+                                        <h4>
+                                            {{ .Info }}
+                                            <i class="zmdi zmdi-help-outline zmdi-hc-1x" title="{{ .Help }}"></i>
+                                            <span style="float: right">存活探测(ICMP)<input type="checkbox"
+                                                                                        data-plugin="switchery"
+                                                                                        data-size="small"
+                                                                                        data-color="#3bafda"
+                                                                                        id="icmptag"/></span>
+                                        </h4>
+                                    {{ else }}
+                                        <h4>
+                                            {{ .Info }}
+                                            <i class="zmdi zmdi-help-outline zmdi-hc-1x" title="{{ .Help }}"></i>
+                                            <span style="float: right">存活探测(ICMP)<input type="checkbox"
+                                                                                        data-plugin="switchery" checked
+                                                                                        data-size="small"
+                                                                                        data-color="#3bafda"
+                                                                                        id="icmptag"/></span>
+                                        </h4>
+                                    {{ end }}
+                                    <textarea class="form-control"
+                                              name={{ .ConfigType }}>{{ .Value }}</textarea>
+                                {{ else }}
+                                    <h4>
+                                        {{ .Info }}
+                                        <i class="zmdi zmdi-help-outline zmdi-hc-1x" title="{{ .Help }}"></i>
+                                    </h4>
+                                    <textarea class="form-control" name={{ .ConfigType }}>{{ .Value }}</textarea>
+                                {{ end }}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-4"></div>
+                                        <div class="col-md-4">
+                                            <button type="button"
+                                                    class="btn btn-block btn-md btn-custom waves-effect waves-light update"
+                                                    style="margin-top: 20px" inputname={{ .ConfigType }}>更新
+                                            </button>
+                                        </div>
+                                        <div class="col-md-4"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {{ else }}
+                        <div class="col-lg-6 col-md-6">
+                            <div class="card-box">
+                                {{ if eq .ConfigType "Masscan" }}
+                                    {{ if .IsSwitch }}
+                                        <h4>
+                                            {{ .Info }}
+                                            <i class="zmdi zmdi-help-outline zmdi-hc-1x" title="{{ .Help }}"></i>
+                                            <span style="float: right"><input type="checkbox" data-plugin="switchery"
+                                                                              data-size="small" data-color="#3bafda"
+                                                                              id="mastag"/></span>
+                                        </h4>
+                                    {{ else }}
+                                        <h4>
+                                            {{ .Info }}
+                                            <i class="zmdi zmdi-help-outline zmdi-hc-1x" title="{{ .Help }}"></i>
+                                            <span style="float: right"><input type="checkbox" checked
+                                                                              data-plugin="switchery" data-size="small"
+                                                                              data-color="#3bafda" id="mastag"/></span>
+                                        </h4>
+                                    {{ end }}
+                                    <div class="col-md-12">
+                                        <div class="col-md-6"><input type="text" class="form-control"
+                                                                     value="{{ .Value }}"
+                                                                     name={{ .ConfigType }} placeholder="路径"/></div>
+                                        <div class="col-md-6"><input type="text" class="form-control"
+                                                                     value="{{ .Speed }}" id="speed"
+                                                                     placeholder="速率"/></div>
+                                    </div>
+                                {{ else }}
+                                    <h4>
+                                        {{ .Info }}
+                                        <i class="zmdi zmdi-help-outline zmdi-hc-1x" title="{{ .Help }}"></i>
+                                    </h4>
+                                    <input type="text" class="form-control" value="{{ .Value }}"
+                                           name="{{ .ConfigType }}"/>
+                                {{ end }}
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-4"></div>
+                                        <div class="col-md-4">
+                                            <button type="button"
+                                                    class="btn btn-block btn-md btn-custom waves-effect waves-light update"
+                                                    style="margin-top: 20px" inputname={{ .ConfigType }}>更新
+                                            </button>
+                                        </div>
+                                        <div class="col-md-4"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {{ end }}
+
+                {{ end }}
+
+            </div>
+        </div>
+    </div>
+{{ end }}
+
+{{ define "js" }}
+    <script src="/static/plugin/sweetalert/sweetalert.min.js"></script>
+    <script src="/static/plugin/switchery/switchery.min.js"></script>
+    <script src="/static/plugin/jquery.poshytip.min.js"></script>
+    <script src="/static/buss/js/config.js"></script>
+{{ end }}

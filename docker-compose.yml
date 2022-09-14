@@ -1,0 +1,9 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    links:
+      - mongo
+  mongo:
+    image: mongo:3.4.0

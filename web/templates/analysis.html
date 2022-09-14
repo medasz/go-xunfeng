@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/static/images/favicon.ico">
+    <title>巡风</title>
+    <link rel="stylesheet" href="/static/plugin/morris/morris.css">
+    <style>
+        .text-muted {
+            text-align: center;
+            font-size: 17px;
+            padding: 19px 0 19px 0
+        }
+
+        .text-muted span {
+            color: white;
+        }
+    </style>
+
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/core.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/components.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/icons.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/pages.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/menu.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/responsive.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/plugin/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"/>
+
+    <!-- HTML5 Shiv and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="/static/js/modernizr.min.js"></script>
+
+
+</head>
+
+<body>
+
+<!-- Navigation Bar-->
+<header id="topnav">
+    <div class="topbar-main">
+        <div class="container">
+
+            <!-- LOGO -->
+            <div class="topbar-left">
+                <a href="/filter" class="logo"><span>巡风</span></a>
+            </div>
+            <!-- End Logo container-->
+
+
+            <ul class="nav navbar-nav navbar-right pull-right">
+                <li>
+                    <!-- Notification -->
+                    <div class="notification-box">
+                        <ul class="list-inline m-b-0">
+                            <li>
+                                <a href="javascript:void(0);" class="right-bar-toggle">
+                                    <i class="zmdi zmdi-notifications-none"></i>
+                                </a>
+                                <div class="noti-dot" style="display: none">
+                                    <span class="dot"></span>
+                                    <span class="pulse"></span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- End Notification bar -->
+                </li>
+                <li>
+                    <a href="/logout">退出</a>
+                </li>
+            </ul>
+            <div class="menu-item">
+                <!-- Mobile menu toggle-->
+                <a class="navbar-toggle">
+                    <div class="lines">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </a>
+                <!-- End mobile menu toggle-->
+            </div>
+
+
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <div class="navbar-custom">
+        <div class="container">
+            <div id="navigation">
+                <!-- Navigation Menu-->
+                <ul class="navigation-menu">
+                    <li class="has-submenu">
+                        <a href="/filter"><i class="zmdi zmdi-search"></i> <span> 搜索 </span> </a>
+                        <ul class="submenu">
+                            <li><a href="/filter">条件筛选</a></li>
+                            <li><a href="/filter/search">自定义</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="/task"><i class="zmdi zmdi-archive"></i> <span> 任务 </span> </a>
+                    </li>
+                    <li>
+                        <a href="/plugin/list"><i class="zmdi zmdi-puzzle-piece"></i> <span> 插件 </span> </a>
+                    </li>
+                    <li>
+                        <a href="/analysis"><i class="zmdi zmdi-widgets"></i> <span> 统计 </span> </a>
+                    </li>
+                    <li class="has-submenu">
+                        <a href="/config?config=nascan"><i class="zmdi zmdi-settings"></i> <span> 配置 </span> </a>
+                        <ul class="submenu">
+                            <li><a href="/config?config=nascan">爬虫引擎</a></li>
+                            <li><a href="/config?config=vulscan">扫描引擎</a></li>
+                        </ul>
+
+                    </li>
+
+                </ul>
+                <!-- End navigation menu  -->
+            </div>
+        </div>
+    </div>
+</header>
+<!-- End Navigation Bar-->
+
+<div class="wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2 col-md-6">
+                <div class="card-box widget-user">
+                    <div class="text-center">
+                        <h2 class="text-custom" data-plugin="counterup">{{ .record }}</h2>
+                        <h5>收集记录总数</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <div class="card-box widget-user">
+                    <div class="text-center">
+                        <h2 class="text-pink" data-plugin="counterup">{{ .ip }}</h2>
+                        <h5>IP总数</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card-box">
+                    <div class="widget-box-2">
+                        <div class="widget-detail-2">
+                            <span class="badge badge-purple pull-left m-t-20">负载：{{ .taskpercent }}% <i
+                                    class="zmdi zmdi-trending-up"></i> </span>
+                            <p class="text-muted">
+                                {{ if .taskalive }}
+                                    <span>漏洞扫描<i class="zmdi zmdi-favorite"
+                                                 style="margin-left:10px;margin-right: 50px" title="进程存活"></i></span>
+                                {{ else }}
+                                    <span>漏洞扫描<i class="zmdi zmdi-close-circle"
+                                                 style="margin-left:10px;margin-right: 50px" title="进程中止"></i></span>
+                                {{ end }}
+                                {{ if .scanalive }}
+                                    <span style="margin-left: -42px" title="进程存活">资产收集<i class="zmdi zmdi-favorite"
+                                                 style="margin-left:10px"></i></span>
+                                {{ else }}
+                                    <span style="margin-left: -42px" title="进程中止">资产收集<i class="zmdi zmdi-close-circle"
+                                                 style="margin-left:10px"></i></span>
+                                {{ end }}
+                            </p>
+                        </div>
+                        <div class="progress progress-bar-purple-alt progress-sm m-b-0">
+                            <div class="progress-bar progress-bar-purple" role="progressbar"
+                                 aria-valuenow="{{ .taskpercent }}" aria-valuemin="0" aria-valuemax="100"
+                                 style="width: {{ .taskpercent }}%;">
+                                <span class="sr-only">{{ .taskpercent }}% Complete</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <div class="card-box widget-user">
+                    <div class="text-center">
+                        <h2 class="text-warning" data-plugin="counterup">{{ .task }}</h2>
+                        <h5>任务总数</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <div class="card-box widget-user">
+                    <div class="text-center">
+                        <h2 class="text-info" data-plugin="counterup">{{ .plugin }}</h2>
+                        <h5>插件总数</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card-box">
+                    <h4 class="header-title m-t-0">漏洞分类<span style="position: absolute;right: 40px;">总数：{{ .vul }}</span>
+                    </h4>
+                    <div class="widget-chart text-center">
+                        <div id="morris-donut-example" style="height: 235px;"></div>
+                    </div>
+                </div>
+            </div><!-- end col -->
+            <div class="col-lg-8">
+                <div class="card-box">
+                    <h4 class="header-title m-t-0">网络资产信息变化</h4>
+                    <div id="morris-line-example" style="height: 235px;"></div>
+                </div>
+            </div><!-- end col -->
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card-box card-tabs">
+                    <ul class="nav nav-pills pull-right">
+                        <li class="active">
+                            <a href="#cardpills-1" data-toggle="tab" aria-expanded="true" class="card-tab">服务类型</a>
+                        </li>
+                        <li class="">
+                            <a href="#cardpills-2" data-toggle="tab" aria-expanded="false" class="card-tab">Web服务类型</a>
+                        </li>
+                    </ul>
+                    <h4 class="header-title m-b-30">服务数量统计</h4>
+
+                    <div class="tab-content">
+                        <div id="cardpills-1" class="tab-pane fade in active">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div id="morris-bar-stacked" style="height: 235px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="cardpills-2" class="tab-pane fade">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div id="morris-bar-stacked2" style="height: 235px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- end col -->
+        </div>
+    </div>
+    <div class="side-bar right-bar">
+        <a href="javascript:void(0);" class="right-bar-toggle">
+            <i class="zmdi zmdi-close-circle-o"></i>
+        </a>
+        <h4 style="color:black !important;">插件推送</h4>
+        <div class="notification-list nicescroll">
+            <ul class="list-group list-no-border user-list">
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<!-- jQuery  -->
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/detect.js"></script>
+<script src="/static/js/fastclick.js"></script>
+<script src="/static/js/jquery.slimscroll.js"></script>
+<script src="/static/js/jquery.blockUI.js"></script>
+<script src="/static/js/waves.js"></script>
+<script src="/static/js/wow.min.js"></script>
+<script src="/static/js/jquery.nicescroll.js"></script>
+<script src="/static/js/jquery.scrollTo.min.js"></script>
+<script src="/static/plugin/jquery.waypoints.min.js"></script>
+<script src="/static/js/jquery.counterup.min.js"></script>
+<script src="/static/plugin/morris/morris.js"></script>
+<script src="/static/plugin/raphael/raphael-min.js"></script>
+<script src="/static/plugin/jquery-knob/jquery.knob.js"></script>
+
+
+<script>
+
+    !function ($) {
+        "use strict";
+        var Dashboard1 = function () {
+            this.$realData = []
+        };
+        Dashboard1.prototype.createLineChart = function (element, data, xkey, ykeys, labels, opacity, Pfillcolor, Pstockcolor, lineColors) {
+            Morris.Line({
+                element: element,
+                data: data,
+                xkey: xkey,
+                ykeys: ykeys,
+                labels: labels,
+                fillOpacity: opacity,
+                pointFillColors: Pfillcolor,
+                pointStrokeColors: Pstockcolor,
+                behaveLikeLine: true,
+                gridLineColor: '#eef0f2',
+                hideHover: 'auto',
+                resize: true,
+                pointSize: 0,
+                lineColors: lineColors
+            });
+        },
+                Dashboard1.prototype.createDonutChart = function (element, data, colors) {
+                    Morris.Donut({
+                        element: element,
+                        data: data,
+                        resize: true, //defaulted to true
+                        colors: colors
+                    });
+                },
+                Dashboard1.prototype.createStackedChart = function (element, data, xkey, ykeys, labels, lineColors) {
+                    Morris.Bar({
+                        element: element,
+                        data: data,
+                        xkey: xkey,
+                        ykeys: ykeys,
+                        stacked: true,
+                        labels: labels,
+                        hideHover: 'auto',
+                        resize: true, //defaulted to true
+                        gridLineColor: '#2f3e47',
+                        gridTextColor: '#98a6ad',
+                        barColors: lineColors,
+                        xLabelAngle:45
+                    });
+                },
+                Dashboard1.prototype.init = function () {
+                    var $data = [
+                        {{ range .trend }}
+                            {
+                                time: '{{ .Date }}',
+                                add:{{ .Info.Add }},
+                                update:{{ .Info.Update }},
+                                delete:{{ .Info.Delete }}
+                            },
+                        {{ end }}
+                    ];
+                    this.createLineChart('morris-line-example', $data, 'time', ['add', 'update', 'delete'], ['新增', '更新', '删除'], ['0.9'], ['#ffffff'], ['#999999'], ['#10c469', '#188ae2', '#964b95']);
+                    var $donutData =
+                            [{{ range .vultype }}
+                                {value:{{ .Count }}, label: '{{ .Type }}'},
+                            {{ end }}];
+                    var $stckedData = [
+                        {{ range .server_type }}
+                                {y: '{{ .ServerName }}', a:{{ .Count }},},
+                        {{ end }}];
+                    var $stckedData_http = [
+                        {{ range .web_type }}
+                                {y: '{{ .ServerName }}', a:{{ .Count }},},
+                        {{ end }}];
+
+                    this.createDonutChart('morris-donut-example', $donutData);
+                    this.createStackedChart('morris-bar-stacked', $stckedData, 'y', ['a'], ['数量'], ['#71b6f9']);
+                    this.createStackedChart('morris-bar-stacked2', $stckedData_http, 'y', ['a'], ['数量'], ['#71b6f9']);
+                },
+                $.Dashboard1 = new Dashboard1, $.Dashboard1.Constructor = Dashboard1
+    }(window.jQuery),
+            function ($) {
+                $.Dashboard1.init();
+            }(window.jQuery);
+
+    $('.card-tab').click(function () {
+        setTimeout(function () {
+            $(window).resize()
+        }, 300);
+    })
+</script>
+<!-- App js -->
+<script src="/static/js/jquery.core.js"></script>
+<script src="/static/js/jquery.app.js"></script>
+<script src="/static/plugin/sweetalert/sweetalert.min.js"></script>
+<script src="/static/buss/js/common.js"></script>
+<script type="text/javascript">
+    var csrf_token = "{{.csrf}}";
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRF-Token", csrf_token);
+            }
+        }
+    });
+</script>
+<div style="display: none">Version:beta 1.1.0</div>
+</body>
+</html>

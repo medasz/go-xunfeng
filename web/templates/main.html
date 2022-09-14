@@ -1,0 +1,244 @@
+{{ template "layout.html" .}}
+{{ define "css" }}
+    <link href="/static/buss/css/main.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/plugin/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/plugin/multiselect/css/multi-select.css" rel="stylesheet" type="text/css"/>
+{{ end }}
+
+{{ define "webinfo" }}
+    <div class="container">
+        <div class="row" style="margin-bottom: 20px">
+            <div class="col-sm-12">
+                <div class="btn-group pull-right m-t-15">
+                    {{ if .itemcount }}
+                    <a href="/filter/searchxls?query={{ .query }}" type="button" class="btn btn-tag waves-effect waves-light"
+                     style="margin-right: 5px;color:white">下载搜索结果
+                    </a>
+                    {{ end }}
+                    <button type="button" class="btn btn-tag waves-effect waves-light"
+                            data-toggle="modal" data-target="#add-new-item" style="margin-right: 5px;color:white">新增目标
+                    </button>
+                    <button type="button" class="btn btn-tag waves-effect waves-light"
+                            data-toggle="modal" data-target="#con-close-modal" style="color:white">新增任务
+                    </button>
+                </div>
+                <div style="margin-top: 15px;color:white">
+                <span style="margin-right: 30px">
+                    <input id="checkboxall" type="checkbox">
+                    <label for="checkboxall">当前页全选</label>
+                </span>
+                <span style="margin-right: 30px">
+                    <input id="checkboxrev" type="checkbox">
+                    <label for="checkboxrev">当前页反选</label>
+                </span>
+                <span>
+                    <input id="resultcheck" type="checkbox">
+                    <label for="resultcheck">结果集全选</label>
+                </span>
+                    <span style="margin-left: 40px;font-weight: bold;">结果集总数:{{ .itemcount }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="content">
+            {{ range $index,$value := .item }}
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="card-box project-box">
+                        <a data-toggle="collapse" data-parent="#accordion{{ $index }}"
+                           href="#bg-primary{{ $index }}"
+                           style="position: absolute;right:33px">
+                            <i class="zmdi zmdi-plus tag"></i>
+                        </a>
+                        <a href="javascript:;" style="position: absolute;right:10px"><input
+                                id="checkbox{{ $index }}" type="checkbox" class="itemcheck"
+                                infoid="{{ $value.Ip }}:{{ $value.Port }}"></a>
+                        <div class="tag-right">
+                            <h4 class="m-t-0 m-b-5" style="height: 25px">
+                                {{ if eq $value.Server "web" }}
+                                    {{ if eq $value.Port 443 }}
+                                        <a href="https://{{ $value.Ip }}:{{ $value.Port }}" class="text-name"
+                                           target="_blank">{{ $value.Ip }}:{{ $value.Port }}</a>
+                                    {{ else }}
+                                        <a href="http://{{ $value.Ip }}:{{ $value.Port }}" class="text-name"
+                                           target="_blank">{{ $value.Ip }}:{{ $value.Port }}</a>
+                                    {{ end }}
+                                {{ else }}
+                                    {{ $value.Ip }}:{{ $value.Port }}
+                                {{ end }}
+                                <div class="label label-purple">{{ $value.Server }}</div>
+                                {{ if $value.WebInfo.Tag }}
+                                    {{ range $value.WebInfo.Tag }}
+                                        <div class="label label-success" title="tag">{{ . }}</div>
+                                    {{ end }}
+                                {{ end }}
+                                {{ if $value.WebInfo.Title }}
+                                    <div class="label label-info"
+                                         title="{{ $value.WebInfo.Title }}">{{ $value.WebInfo.Title }}</div>
+                                {{ end }}
+                            </h4>
+                        </div>
+                        <p class="text-time text-uppercase m-b-0 font-13">{{ $value.Time.Format "2006-01-02 15:04:05" }}</p>
+                        <div class="clearfix"></div>
+                        <div id="bg-primary{{ $index }}" class="panel-collapse collapse">
+                            {{ if $value.Hostname }}
+                                <p class="text-purple m-b-10 font-13"><b>HostName: </b>{{ $value.Hostname }}</p>
+                            {{ end }}
+                            <p class="text-muted font-13"><b>Banner: </b>{{ $value.Banner }}</p>
+                        </div>
+                    </div>
+                </div>
+            {{ end }}
+        </div>
+        {{ if gt .itemcount 60 }}
+            <div class="row" style="position: absolute;top: 100%;left: 50%;margin: -80px 0 0 -212px;">
+                <ul class="pagination pagination-split">
+                    <li>
+                        <a href="javascript:prePage()"><i class="fa fa-angle-left"></i>前一页</a>
+                    </li>
+                        {{ range .page_list }}
+                            <li>
+                                <a href="javascript:turnTo({{ . }})">{{ . }}</a>
+                            </li>
+                        {{ end }}
+                    <li>
+                        <a href="javascript:nextPage()">后一页<i class="fa fa-angle-right"></i></a>
+                    </li>
+                </ul>
+            </div>
+        {{ end }}
+        <div id="con-close-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">新增任务</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-name" class="control-label">任务名称</label>
+                                    <input type="text" class="form-control required" id="field-name" placeholder="任务名称">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group no-margin">
+                                    <label for="field-plan" class="control-label">任务类型</label>
+                                    <select class="form-control" id="field-plan">
+                                        <option value="0">执行一次</option>
+                                        <option value="1">每天执行</option>
+                                        <option value="7">每周执行</option>
+                                        <option value="30">每月执行</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group no-margin">
+                                    <label for="field-isupdate" class="control-label">是否自动更新列表</label>
+                                    <select class="form-control" id="field-isupdate" disabled="disabled">
+                                        <option values="0"></option>
+                                        <option value="1">是</option>
+                                        <option value="0">否</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group no-margin">
+                                    <label for="field-type" class="control-label">类型</label>
+                                    <select class="form-control" id="field-type">
+                                        <option></option>
+                                        {{ range .plugin_type }}
+                                            <option>{{ . }}</option>
+                                        {{ end }}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group no-margin">
+                                    <label for="field-risk" class="control-label">危害等级</label>
+                                    <select class="form-control" id="field-risk">
+                                        <option></option>
+                                        <option>紧急</option>
+                                        <option>高危</option>
+                                        <option>中危</option>
+                                        <option>低危</option>
+                                        <option>风险</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group no-margin">
+                                    <label for="field-search" class="control-label">模糊筛选</label>
+                                    <input type="text" class="form-control" id="field-search" placeholder="插件名称">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group no-margin">
+                                    <label for="field-plugin" class="control-label">插件选择</label>
+                                    <select multiple="multiple" class="multi-select" id="field-plugin"
+                                            name="field-plugin[]" data-plugin="multiselect">
+                                        {{ range .plugin }}
+                                            <option title="{{ .Info }}">{{ .Name }}</option>
+                                        {{ end }}
+                                    </select>
+									<div id="select-all"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        {{ if .plugin }}
+                            <span style="float: left;">插件总数：{{ len .plugin }}</span>
+                        {{ end }}
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal" id="close">关闭
+                        </button>
+                        <button type="button" class="btn btn-info waves-effect waves-light" id="savetask">保存任务</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="add-new-item" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="custom-width-modalLabel"
+             aria-hidden="true" style="display: none;">
+            <div class="modal-dialog" style="width:55%;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="custom-width-modalLabel">新增目标</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-newitems" class="control-label">新增目标</label>
+                                    <textarea class="form-control" id="field-newitems" placeholder="ip:端口，以逗号分割"
+                                              rows="10"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"
+                                id="closenewitem">关闭
+                        </button>
+                        <button type="button" class="btn btn-primary waves-effect waves-light" id="addnewitems">新增
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{ end }}
+
+{{ define "js" }}
+    <script src="/static/plugin/sweetalert/sweetalert.min.js"></script>
+    <script src="/static/plugin/multiselect/js/jquery.multi-select.js"></script>
+    <script src="/static/buss/js/result.js"></script>
+{{ end }}
