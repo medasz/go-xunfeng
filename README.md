@@ -3,7 +3,6 @@ xunfeng by go
 
 把`网络资产识别引擎`,`漏洞检测引擎`,`web服务`三个主体合并到一个main里面
 
-# 巡风 [![License](https://img.shields.io/aur/license/yaourt.svg)](https://github.com/ysrc/xunfeng/blob/master/LICENSE)
 ----------
 
 **巡风**是一款适用于企业内网的`漏洞快速应急、巡航扫描`系统，通过搜索功能可清晰的了解内部网络资产分布情况，并且可指定漏洞插件对搜索结果进行快速漏洞检测并输出结果报表。
@@ -16,6 +15,11 @@ xunfeng by go
 
 漏洞检测引擎会根据用户指定的`任务规则`进行定期或者一次性的漏洞检测，其支持2种插件类型、标示符与脚本，均可通过web控制台进行添加。
 
+## TODO
+
+- [X] 网络资产识别引擎
+- [X] web服务
+- [ ] 漏洞检测引擎
 
 ## 安装指南
 
@@ -195,9 +199,6 @@ def check(ip,port,timeout):
         │
         └─vuldb # 漏洞库目录
 
-扫描下方二维码关注YSRC公众号，回复自己的微信号+巡风，会有人拉你进巡风的微信讨论群。
-
-![](http://mmbiz.qpic.cn/mmbiz/PAV8ewtdsKpkeG9VRYNhC76iacVSe3ichYiajictdF2Q34PQo7iaPV15jjGiaAev6SqpeK5maDvtAYUtqXEYUib4ljM3A/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1)
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=medasz/go-xunfeng&type=Date)](https://star-history.com/#medasz/go-xunfeng&Date)
