@@ -199,6 +199,5 @@ def check(ip,port,timeout):
         │
         └─vuldb # 漏洞库目录
 
-## Star History
 ## Stargazers over time
 [![Stargazers over time](https://starchart.cc/medasz/go-xunfeng.svg?variant=adaptive)](https://starchart.cc/medasz/go-xunfeng)
