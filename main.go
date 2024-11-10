@@ -1,10 +1,10 @@
 package main
 
 import (
-	"go-xunfeng/vulscan"
 	"log"
 
 	"go-xunfeng/nascan"
+	"go-xunfeng/vulscan"
 	"go-xunfeng/web"
 )
 

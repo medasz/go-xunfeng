@@ -123,3 +123,7 @@ func GetVulGroupType() ([]models.VulType, error) {
 	}
 	return data, nil
 }
+
+func CreatePlugin(plugin models.Plugin) (*mongo.InsertOneResult, error) {
+	return mgoDb.Collection("Plugin").InsertOne(context.Background(), plugin)
+}
