@@ -1,13 +1,13 @@
 # go-xunfeng
 xunfeng by go
 
-把`网络资产识别引擎`,`漏洞检测引擎`,`web服务`三个主体合并到一个main里面
+整合`网络资产识别引擎`,`漏洞检测引擎`,`web服务`
 
 ----------
 
-**巡风**是一款适用于企业内网的`漏洞快速应急、巡航扫描`系统，通过搜索功能可清晰的了解内部网络资产分布情况，并且可指定漏洞插件对搜索结果进行快速漏洞检测并输出结果报表。
+**go巡风**是一款适用于企业内网的`漏洞快速应急、巡航扫描`系统，通过搜索功能可清晰的了解内部网络资产分布情况，并且可指定漏洞插件对搜索结果进行快速漏洞检测并输出结果报表。
 
-**本软件只做初步探测，无攻击性行为。请使用者遵守《[中华人民共和国网络安全法](http://www.npc.gov.cn/npc/xinwen/2016-11/07/content_2001605.htm)》，勿将巡风用于非授权的测试，YSRC/同程安全应急响应中心/同程网络科技股份有限公司不负任何连带法律责任。**
+**本软件只做初步探测，无攻击性行为。请使用者遵守《[中华人民共和国网络安全法](http://www.npc.gov.cn/npc/xinwen/2016-11/07/content_2001605.htm)》，勿将巡风用于非授权的测试，作者不负任何连带法律责任。**
 
 其主体分为两部分：`网络资产识别引擎`，`漏洞检测引擎`。
 
@@ -155,49 +155,67 @@ def check(ip,port,timeout):
 
 ## 文件结构
 
-    │  config.py  # 配置文件
-    │  README.md  # 说明文档
-    │  run.bat  # Windows启动服务
-    │  run.sh    # Linux启动服务，重新启动前需把进程先结束掉
-    │
-    ├─aider
-    │      aider.py  # 辅助验证脚本
-    │
-    ├─db  # 初始数据库结构
-    │
-    ├─masscan  # 内置编译好的Masscan程序（CentOS win64适用），需要chmod+x给执行权限（root），若无法使用请自行编译安装。
-    ├─nascan
-    │  │  nascan.py # 网络资产信息抓取
-    │  │
-    │  ├─lib
-    │  │      common.py 其他方法
-    │  │      icmp.py  # ICMP发送类
-    │  │      log.py  # 日志输出
-    │  │      mongo.py  # 数据库连接
-    │  │      scan.py  # 扫描与识别
-    │  │      start.py  # 线程控制
-    │  │
-    │  └─plugin
-    │          masscan.py  # 调用Masscan脚本
-    │
-    ├─views
-    │  │  web.py  # web启动
-    │  │  view.py  # web请求处理
-    │  │
-    │  ├─lib
-    │  │      Conn.py  # 数据库公共类
-    │  │      CreateExcel.py  # 表格处理
-    │  │      Login.py  # 权限验证
-    │  │      QueryLogic.py  # 查询语句解析
-    │  │
-    │  ├─static #静态资源目录
-    │  │
-    │  └─templates #模板文件目录
-    │
-    └─vulscan
-        │  vulscan.py  # 漏洞检测进程
-        │
-        └─vuldb # 漏洞库目录
+    ├── Dockerfile
+    ├── README.md  # 说明文档
+    ├── config
+    │ └── config.go
+    ├── config.ini  # 配置文件
+    ├── db  # 数据库链接
+    ├── docker-compose.yml
+    ├── go.mod
+    ├── go.sum
+    ├── main.go
+    ├── masscan  # 内置编译好的Masscan程序（CentOS win64适用），需要chmod+x给执行权限（root），若无法使用请自行编译安装。
+    ├── models  # 初始数据库结构
+    ├── nascan
+    │ └── nascan.go  # 网络资产信息抓取
+    ├── pkg
+    │ ├── excel
+    │ │ └── create_excel.go  # 表格处理
+    │ ├── exchange
+    │ │ └── config.go
+    │ ├── htmlRender
+    │ │ └── template.go
+    │ ├── nascan
+    │ │ ├── cidr.go
+    │ │ ├── common.go  # 其他方法
+    │ │ ├── icmp.go  # ICMP发送类
+    │ │ ├── masscan.go  # 调用masscan脚本
+    │ │ ├── scan.go  # 扫描与识别
+    │ │ └── start.go  # 线程控制
+    │ ├── query
+    │ │ └── query.go  # 查询语句解析
+    │ ├── slices
+    │ │ └── deleteElement.go
+    │ └── tools
+    │     ├── filex.go
+    │     ├── ping.go
+    │     └── slicex.go
+    ├── vulscan
+    │ └── vulscan.go
+    └── web
+    ├── middlewares
+    │ ├── csrf.go
+    │ └── jwt.go  # 权限验证
+    ├── params
+    │ ├── config.go
+    │ ├── login.go
+    │ ├── plugin.go
+    │ ├── search.go
+    │ └── task.go
+    ├── routers
+    │ └── router.go  # web请求处理
+    ├── statics  # 静态资源目录
+    ├── templates  # 模板文件目录
+    ├── views
+    │ ├── analysis.go
+    │ ├── config.go
+    │ ├── error.go
+    │ ├── login.go
+    │ ├── plugin.go
+    │ ├── search.go
+    │ └── task.go
+    └── web.go  # web启动
 
 ## Stargazers over time
 [![Stargazers over time](https://starchart.cc/medasz/go-xunfeng.svg?variant=adaptive)](https://starchart.cc/medasz/go-xunfeng)
